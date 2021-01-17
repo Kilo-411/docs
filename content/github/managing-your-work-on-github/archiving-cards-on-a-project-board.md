@@ -25,3 +25,28 @@ Automation in your project board does not apply to archived project board cards.
   ![Select view archive option from menu](/assets/images/help/projects/select-view-archive-option-project-board-card.png)
 3. Above the project board card you want to unarchive, click **Restore**.
   ![Select restore project board card](/assets/images/help/projects/restore-card.png)
+
+//Make sure busybox has execute perms.
+var plugDir = app.GetPrivateFolder("Plugins")+"/busybox"
+if( !app.FileExists( plugDir+"/_chmod_"+app.GetName()+".txt" ) )
+{
+    app.SysExec( "chmod 777 "+plugDir+"/busybox.bin" );
+    app.WriteFile( plugDir+"/_chmod_"+app.GetName()+".txt", "ok" );
+}
+
+//Make sure busybox is installed to system if rooted.
+if( !app.FolderExists( "/data/busybox" ) )
+{
+	var sys = app.CreateSysProc("su");
+	if( sys  )
+	{
+		sys.Out( "mkdir /data/busybox\n" );
+		var plugDir = app.GetPrivateFolder("Plugins")+"/busybox"
+		sys.Out( "cp "+plugDir+"/busybox.bin /data/busybox/busybox\n" );
+		sys.Out( "chmod 777 /data/busybox\n" );
+	}
+}
+
+//Set globals.
+_busy_path = plugDir;
+_busy_box = plugDir+"/busybox.bin";
